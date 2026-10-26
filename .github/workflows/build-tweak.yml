@@ -17,9 +17,6 @@ jobs:
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
       
-      - name: Install ldid
-        run: brew install ldid
-      
       - name: Download patched SDK
         run: |
           export THEOS=$HOME/theos
@@ -32,12 +29,12 @@ jobs:
           export THEOS=$HOME/theos
           make
       
-      - name: Re-sign dylib
+      - name: Sign dylib with codesign (ad-hoc)
         run: |
           DYLIB=".theos/obj/debug/iGameGodBypass.dylib"
-          /opt/homebrew/bin/ldid -S "$DYLIB"
+          codesign --force --sign - "$DYLIB"
           echo "Signed. Verifying:"
-          /opt/homebrew/bin/ldid -e "$DYLIB" 2>&1 | head -5
+          codesign -dv "$DYLIB" 2>&1 | head -5
       
       - name: Upload dylib
         uses: actions/upload-artifact@v4
