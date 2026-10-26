@@ -20,12 +20,6 @@ jobs:
       - name: Install ldid
         run: brew install ldid
       
-      - name: Setup ldid PATH
-        run: |
-          LDD=$(which ldid)
-          echo "ldid at: $LDD"
-          sudo ln -sf "$LDD" /usr/local/bin/ldid
-      
       - name: Download patched SDK
         run: |
           export THEOS=$HOME/theos
@@ -38,12 +32,11 @@ jobs:
           export THEOS=$HOME/theos
           make
       
-      - name: Re-sign dylib (final bytes)
+      - name: Sign dylib with ldid (iOS-compatible ad-hoc)
         run: |
           DYLIB=".theos/obj/debug/iGameGodBypass.dylib"
-          codesign --force --sign - "$DYLIB"
-          echo "Signed. Verifying:"
-          codesign -dv "$DYLIB" 2>&1 | head -5
+          /opt/homebrew/bin/ldid -S "$DYLIB"
+          echo "Signed."
       
       - name: Upload dylib
         uses: actions/upload-artifact@v4
