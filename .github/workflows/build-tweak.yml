@@ -1,3 +1,4 @@
+
 name: Build iOS Tweak
 on:
   workflow_dispatch:
@@ -28,6 +29,7 @@ jobs:
         run: |
           export THEOS=$HOME/theos
           export THEOS_SDK_PATH=$SDK_PATH
+          export PATH="/opt/homebrew/bin:$PATH"
           make
       
       - name: Upload dylib
