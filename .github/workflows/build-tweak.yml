@@ -42,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: iGameGodBypass-dylib
-          path: .theos/obj/iphone/arm64/iGameGodBypass.dylib
+          path: .theos/obj/debug/iGameGodBypass.dylib
