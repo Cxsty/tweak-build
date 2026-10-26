@@ -25,7 +25,6 @@ jobs:
           LDD=$(which ldid || find / -name ldid -type f 2>/dev/null | head -1)
           echo "ldid found at: $LDD"
           sudo ln -sf "$LDD" /usr/local/bin/ldid
-          ldid --version
       
       - name: Download patched SDK
         run: |
