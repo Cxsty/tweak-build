@@ -7,12 +7,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: "26.2"
+      
       - name: Install Theos
         run: |
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
       
-      - name: Download patched SDK (bypass api.github.com rate limit)
+      - name: Install ldid
+        run: brew install ldid
+      
+      - name: Setup ldid
+        run: |
+          LDD=$(which ldid || find / -name ldid -type f 2>/dev/null | head -1)
+          echo "ldid found at: $LDD"
+          sudo ln -sf "$LDD" /usr/local/bin/ldid
+          ldid --version
+      
+      - name: Download patched SDK
         run: |
           export THEOS=$HOME/theos
           mkdir -p "$THEOS/sdks"
@@ -22,7 +37,6 @@ jobs:
       - name: Build tweak
         run: |
           export THEOS=$HOME/theos
-          export PATH="/opt/homebrew/bin:$PATH"
           make package FINALPACKAGE=1 TARGET="iphone:clang:16.5:15.0"
       
       - name: Upload dylib
