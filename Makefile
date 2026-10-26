@@ -9,5 +9,3 @@ iGameGodBypass_FILES = tweak.xm
 iGameGodBypass_FRAMEWORKS = Foundation
 
 include $(THEOS_MAKE_PATH)/tweak.mk
-PYEOF
-echo "written"
