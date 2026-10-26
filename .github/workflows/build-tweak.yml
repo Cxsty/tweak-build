@@ -17,6 +17,15 @@ jobs:
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
       
+      - name: Install ldid
+        run: brew install ldid
+      
+      - name: Setup ldid PATH
+        run: |
+          LDD=$(which ldid)
+          echo "ldid at: $LDD"
+          sudo ln -sf "$LDD" /usr/local/bin/ldid
+      
       - name: Download patched SDK
         run: |
           export THEOS=$HOME/theos
@@ -29,7 +38,7 @@ jobs:
           export THEOS=$HOME/theos
           make
       
-      - name: Sign dylib with codesign (ad-hoc)
+      - name: Re-sign dylib (final bytes)
         run: |
           DYLIB=".theos/obj/debug/iGameGodBypass.dylib"
           codesign --force --sign - "$DYLIB"
