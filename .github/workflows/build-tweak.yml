@@ -6,14 +6,30 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: "16.2"
+      
       - name: Install Theos
         run: |
-          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+          git clone --recursive https://github.com/theos/theos.git $HOME/theos
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+      
+      - name: Setup SDK
+        run: |
+          export THEOS=$HOME/theos
+          SDK_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
+          echo "SDK_PATH=$SDK_PATH" >> $GITHUB_ENV
+          ls "$SDK_PATH"
+      
       - name: Build tweak
         run: |
           export THEOS=$HOME/theos
+          export THEOS_SDK_PATH=$SDK_PATH
           make
+      
       - name: Upload dylib
         uses: actions/upload-artifact@v4
         with:
