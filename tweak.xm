@@ -25,10 +25,6 @@
 
 %end
 
-// Hook any class with "Login" in its name
 %ctor {
-    // Constructor runs when the dylib is loaded
     NSLog(@"[iGameGodBypass] Loaded successfully");
 }
-PYEOF
-echo "written"
