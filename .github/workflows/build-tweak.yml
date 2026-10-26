@@ -36,7 +36,7 @@ jobs:
       - name: Build tweak
         run: |
           export THEOS=$HOME/theos
-          make package FINALPACKAGE=1 TARGET="iphone:clang:16.5:15.0"
+          make
       
       - name: Upload dylib
         uses: actions/upload-artifact@v4
