@@ -7,30 +7,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Xcode
-        uses: maxim-lobanov/setup-xcode@v1.6.0
-        with:
-          xcode-version: "26.2"
-      
       - name: Install Theos
         run: |
-          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+          git clone --recursive https://github.com/theos/theos.git $HOME/theos
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
       
-      - name: Setup SDK
+      - name: Download patched SDK (bypass api.github.com rate limit)
         run: |
           export THEOS=$HOME/theos
-          SDK_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
-          echo "SDK_PATH=$SDK_PATH" >> $GITHUB_ENV
-          ls "$SDK_PATH"
+          mkdir -p "$THEOS/sdks"
+          curl -fsSL "https://github.com/theos/sdks/releases/latest/download/iPhoneOS16.5.sdk.tar.xz" | tar -xJ -C "$THEOS/sdks"
+          ls "$THEOS/sdks"
       
       - name: Build tweak
         run: |
           export THEOS=$HOME/theos
-          export THEOS_SDK_PATH=$SDK_PATH
           export PATH="/opt/homebrew/bin:$PATH"
-          which ldid || find / -name ldid -type f 2>/dev/null | head -1
-          make
+          make package FINALPACKAGE=1 TARGET="iphone:clang:16.5:15.0"
       
       - name: Upload dylib
         uses: actions/upload-artifact@v4
